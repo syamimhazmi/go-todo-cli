@@ -3,6 +3,7 @@ package todocli
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"time"
 )
@@ -81,4 +82,11 @@ func (t *Todos) Delete(index int) error {
 	*t = append(ls[:index-1], ls[index:]...)
 
 	return nil
+}
+
+func (t *Todos) Print() {
+	for i, item := range *t {
+		i++
+		fmt.Printf("%d - %s\n", i, item.Task)
+	}
 }
