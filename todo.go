@@ -44,7 +44,7 @@ func (t *Todos) Store(filename string) error {
 		return err
 	}
 
-	return os.WriteFile(filename, data, 0o644)
+	return os.WriteFile(filename, []byte(data), 0o644)
 }
 
 func (t *Todos) Add(task string) {
