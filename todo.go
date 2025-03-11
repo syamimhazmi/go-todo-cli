@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/alexeyco/simpletable"
@@ -110,12 +111,12 @@ func (t *Todos) Print() {
 			task = green(fmt.Sprintf("\u2705 %s", item.Task))
 		}
 
-		cells = append(cells, *&[]*simpletable.Cell{
-			{Text: fmt.Sprintf("%d", idx)},
+		cells = append(cells, []*simpletable.Cell{
+			{Text: strconv.Itoa(idx)},
 			{Text: task},
-			{Text: fmt.Sprintf("%t", item.Done)},
-			{Text: item.CompeletedAt.Format(time.RFC822)},
-			{Text: item.CreatedAt.Format(time.RFC822)},
+			{Text: strconv.FormatBool(item.Done)},
+			{Text: item.CompeletedAt.Format("02 Jan 06 15:04 MST")},
+			{Text: item.CreatedAt.Format("02 Jan 06 15:04 MST")},
 		})
 	}
 
@@ -123,11 +124,26 @@ func (t *Todos) Print() {
 
 	table.Footer = &simpletable.Footer{
 		Cells: []*simpletable.Cell{
-			{Align: simpletable.AlignCenter, Span: 5, Text: "You todos here"},
+			{
+				Align: simpletable.AlignCenter,
+				Span:  5, Text: red(fmt.Sprintf("You have %d pending todos", t.countPending())),
+			},
 		},
 	}
 
 	table.SetStyle(simpletable.StyleUnicode)
 
 	table.Println()
+}
+
+func (t *Todos) countPending() int {
+	total := 0
+
+	for _, item := range *t {
+		if !item.Done {
+			total++
+		}
+	}
+
+	return total
 }
